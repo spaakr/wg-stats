@@ -61,9 +61,18 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+//        var_dump(strcasecmp("foo", 0) );die;
         $wg = new WG();
-        $wg->getEff();
-        var_dump($wg->getWN8()); die;
+        echo '<pre>';
+        echo "<br>kalessin";
+        echo "<br>Эфф: ".$wg->getEff();
+        echo "<br>WN8: ".$wg->getWN8();
+        $wg->account_id = 17511656;
+        echo "<br>______DIESEL______";
+        echo "<br>Эфф: ".$wg->getEff();
+        echo "<br>WN8: ".$wg->getWN8();
+        echo '</pre>';
+         die;
         return $this->render('index');
     }
 }

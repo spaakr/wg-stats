@@ -14,7 +14,7 @@ use yii\helpers\ArrayHelper;
 
 class WG
 {
-    private $account_id = 8800265;
+    public $account_id = 8800265;
 
     public function getAccountInfo()
     {
@@ -133,6 +133,7 @@ class WG
         $avgFrag = null;
         $avgDef = null;
         $avgWinRate = null;
+        $avgWinRate2 = null;
 
         $expDmg = null;
         $expSpot = null;
@@ -150,24 +151,27 @@ class WG
             $data = $tankInfo->all;
             $tank_id = $tankInfo->tank_id;
 
-            $avgDmg += $data->damage_dealt;
-            $avgSpot += $data->spotted;
-            $avgFrag += $data->frags;
-            $avgDef += $data->dropped_capture_points;
-            $avgWinRate += ($data->wins * 100) / $data->battles;
+            if (isset($newExpValues[$tank_id])) {
+                $avgDmg += $data->damage_dealt;
+                $avgSpot += $data->spotted;
+                $avgFrag += $data->frags;
+                $avgDef += $data->dropped_capture_points;
+                $avgWinRate += $data->wins;
 
-            $expDmg += ($data->battles * $newExpValues[$tank_id]->expDamage);
-            $expSpot += ($data->battles * $newExpValues[$tank_id]->expSpot);
-            $expFrag += ($data->battles * $newExpValues[$tank_id]->expFrag);
-            $expDef += ($data->battles * $newExpValues[$tank_id]->expDef);
-            $expWinRate += ($data->battles * ($newExpValues[$tank_id]->expWinRate/100));
+                $expDmg += ($data->battles * $newExpValues[$tank_id]->expDamage);
+                $expSpot += ($data->battles * $newExpValues[$tank_id]->expSpot);
+                $expFrag += ($data->battles * $newExpValues[$tank_id]->expFrag);
+                $expDef += ($data->battles * $newExpValues[$tank_id]->expDef);
+                $expWinRate += ($data->battles * ($newExpValues[$tank_id]->expWinRate));
+            }
         }
-        var_dump($avgWinRate);
-        $rDAMAGE += $avgDmg / ($expDmg);
-        $rSPOT += $avgSpot / ($expSpot);
-        $rFRAG += $avgFrag / ($expFrag);
-        $rDEF += $avgDef / ($expDef);
-        $rWIN += $avgWinRate / (($expWinRate / 100));
+
+        $rDAMAGE = $avgDmg / ($expDmg);
+        $rSPOT = $avgSpot / ($expSpot);
+        $rFRAG = $avgFrag / ($expFrag);
+        $rDEF = $avgDef / ($expDef);
+        $rWIN = $avgWinRate / ($expWinRate / 100);
+
         $rWINc = max(0, ($rWIN - 0.71) / (1 - 0.71));
         $rDAMAGEc = max(0, ($rDAMAGE - 0.22) / (1 - 0.22));
         $rFRAGc = max(0, min($rDAMAGEc + 0.2, ($rFRAG - 0.12) / (1 - 0.12)));
