@@ -57,22 +57,21 @@ class SiteController extends Controller
     /**
      * Displays homepage.
      *
+     * @param null $search
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($search = null)
     {
-//        var_dump(strcasecmp("foo", 0) );die;
         $wg = new WG();
         echo '<pre>';
-        echo "<br>kalessin";
-        echo "<br>Эфф: ".$wg->getEff();
-        echo "<br>WN8: ".$wg->getWN8();
-        $wg->account_id = 17511656;
-        echo "<br>______DIESEL______";
-        echo "<br>Эфф: ".$wg->getEff();
-        echo "<br>WN8: ".$wg->getWN8();
+        if ($account_id = $wg->getAccountId($search)) {
+            echo "<br>$search";
+            echo "<br>Account_id: $account_id";
+            echo "<br>Эфф: " . $wg->getEff();
+            echo "<br>WN8: " . $wg->getWN8();
+        }
         echo '</pre>';
-         die;
+        die;
         return $this->render('index');
     }
 }

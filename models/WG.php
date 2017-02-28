@@ -14,7 +14,31 @@ use yii\helpers\ArrayHelper;
 
 class WG
 {
-    public $account_id = 8800265;
+    private $account_id = 8800265;
+
+    public function getAccountList($search)
+    {
+        $response = json_decode(file_get_contents('https://api.worldoftanks.ru/wot/account/list/?application_id=demo&search=' . $search));
+        if (isset($response->status) && $response->status === 'ok') {
+            $accountList = \yii\helpers\ArrayHelper::map($response->data, 'nickname', 'account_id');
+            if (is_array($accountList)) {
+                return array_change_key_case($accountList, CASE_LOWER);
+            }
+
+        }
+        return false;
+    }
+
+    public function getAccountId($search)
+    {
+        $search = mb_strtolower($search);
+        $accountList = $this->getAccountList($search);
+        if ($accountList && isset($accountList[$search])) {
+            $this->account_id = $accountList[$search];
+            return $accountList[$search];
+        }
+        return false;
+    }
 
     public function getAccountInfo()
     {
@@ -147,6 +171,9 @@ class WG
         $rDEF = null;
         $rWIN = null;
 
+        if (!isset($accountStats->data)) {
+            var_dump($accountStats); die;
+        }
         foreach ($accountStats->data->$account_id as $tankInfo) {
             $data = $tankInfo->all;
             $tank_id = $tankInfo->tank_id;
