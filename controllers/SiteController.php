@@ -63,15 +63,14 @@ class SiteController extends Controller
     public function actionIndex($search = null)
     {
         $wg = new WG();
-        echo '<pre>';
-        if ($account_id = $wg->getAccountId($search)) {
-            echo "<br>$search";
-            echo "<br>Account_id: $account_id";
-            echo "<br>Эфф: " . $wg->getEff();
-            echo "<br>WN8: " . $wg->getWN8();
-        }
-        echo '</pre>';
-        die;
-        return $this->render('index');
+        $account_id = $wg->getAccountId($search);
+        $eff = $wg->getEff();
+        $wn8 = $wg->getWN8();
+        return $this->render('index', [
+            'account_id' => $account_id,
+            'eff' => $eff,
+            'wn8' => $wn8,
+            'search' => $search,
+        ]);
     }
 }
